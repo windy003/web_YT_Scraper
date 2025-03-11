@@ -414,11 +414,6 @@ def save_videos_to_db(channel_url, videos_json):
 
 
 
-@app.errorhandler(500)
-def internal_server_error(e):
-    logger.error(f"500错误: {str(e)}")
-    return render_template('500.html'), 500
-
 
 # 直接运行应用
 if __name__ == '__main__':
