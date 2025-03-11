@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc 
+
+# 数据库文件
+instance/
+*.db
+notes.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+

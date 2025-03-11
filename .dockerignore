@@ -1,0 +1,24 @@
+# 数据文件
+instance/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.venv
+venv/
+
+# 版本控制
+.git
+.gitignore
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 开发和部署文件
+*.log
+backups/ 

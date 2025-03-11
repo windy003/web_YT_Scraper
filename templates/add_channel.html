@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}添加频道 - YouTube频道爬虫{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">添加YouTube频道</h4>
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category if category else 'info' }}">
+                        {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                <!-- 始终显示的调试区域 -->
+                
+                {% if debug_info %}
+                <div style="background-color: #ffeb3b; color: #000; padding: 15px; margin: 20px 0; border: 2px solid #f00; border-radius: 5px;">
+                  <h4 style="margin-top: 0;">调试信息</h4>
+                  <pre style="margin-bottom: 0;">{{ debug_info }}</pre>
+                </div>
+                {% endif %}
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="channel_url" class="form-label">YouTube频道URL</label>
+                        <input type="url" class="form-control" id="channel_url" name="channel_url" required placeholder="https://www.youtube.com/channel/...">
+                        <div class="form-text">
+                            支持的URL格式:
+                            <ul>
+                                <li>https://www.youtube.com/channel/CHANNEL_ID</li>
+                                <li>https://www.youtube.com/c/CUSTOM_URL</li>
+                                <li>https://www.youtube.com/user/USERNAME</li>
+                                <li>https://www.youtube.com/@USERNAME</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">添加频道</button>
+                    </div>
+                </form>
+                {% if debug_info %}
+                <div class="debug-info" style="background-color: #f8f9fa; padding: 10px; border: 1px solid #ddd; margin: 10px 0;">
+                  <h4>调试信息</h4>
+                  <p>{{ debug_info }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <p class="mb-0"><a href="{{ url_for('dashboard') }}">返回控制面板</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

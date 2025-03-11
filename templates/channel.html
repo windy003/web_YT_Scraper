@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ channel.channel_name }} - YouTube频道爬虫{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>{{ channel.channel_name }}</h1>
+            <p class="text-muted">共有 {{ total_videos }} 个视频，随机显示 5 个</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_channel', channel_id=channel.id) }}" 
+               class="btn btn-outline-primary me-2">
+                重新随机
+            </a>
+            <a href="{{ url_for('refresh_channel', channel_id=channel.id) }}" 
+               class="btn btn-outline-secondary me-2">
+                刷新数据
+            </a>
+            <a href="{{ url_for('dashboard') }}" 
+               class="btn btn-outline-secondary">
+                返回控制面板
+            </a>
+        </div>
+    </div>
+
+    {% if videos %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for video in videos %}
+        <div class="col">
+            <div class="card h-100">
+                {% if video.thumbnail_url %}
+                <img src="{{ video.thumbnail_url }}" 
+                     class="card-img-top" 
+                     alt="{{ video.title }}"
+                     style="object-fit: cover; height: 200px;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ video.title }}</h5>
+                    {% if video.published_at %}
+                    <p class="card-text text-muted">
+                        发布于: {{ video.published_at.strftime('%Y-%m-%d') }}
+                    </p>
+                    {% endif %}
+                    {% if video.duration %}
+                    <p class="card-text text-muted">
+                        时长: {{ video.duration }}
+                    </p>
+                    {% endif %}
+                    
+                    <!-- 添加折叠/展开功能 -->
+                    <div class="description-container">
+                        <!-- 简短描述 -->
+                        <p class="card-text description-preview">
+                            {{ video.description|truncate(100) }}
+                        </p>
+                        <!-- 完整描述（默认隐藏） -->
+                        <div class="collapse" id="description-{{ video.id }}">
+                            <p class="card-text">{{ video.description }}</p>
+                        </div>
+                        <!-- 展开/收起按钮 -->
+                        {% if video.description|length > 100 %}
+                        <button class="btn btn-link btn-sm p-0 toggle-description" 
+                                data-bs-toggle="collapse" 
+                                data-bs-target="#description-{{ video.id }}"
+                                aria-expanded="false">
+                            展开描述
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <a href="https://www.youtube.com/watch?v={{ video.id }}" 
+                       target="_blank" 
+                       class="btn btn-sm btn-outline-primary mt-2">
+                        在YouTube上观看
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">该频道暂无视频数据。点击"刷新数据"按钮获取最新视频。</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- 添加自定义样式 -->
+<style>
+.description-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.description-preview {
+    margin-bottom: 0.5rem;
+}
+
+.toggle-description {
+    text-decoration: none;
+    color: #0d6efd;
+    font-size: 0.875rem;
+}
+
+.toggle-description:hover {
+    text-decoration: underline;
+}
+
+.collapse {
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+</style>
+
+<!-- 添加自定义脚本 -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取所有折叠/展开按钮
+    const toggleButtons = document.querySelectorAll('.toggle-description');
+    
+    // 为每个按钮添加点击事件
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.textContent = isExpanded ? '展开描述' : '收起描述';
+            
+            // 切换预览文本的显示
+            const container = this.closest('.description-container');
+            const preview = container.querySelector('.description-preview');
+            preview.style.display = isExpanded ? 'block' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %} 

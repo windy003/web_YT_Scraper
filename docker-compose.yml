@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    image: windy007008/web_yt_scraper:latest
+    ports:
+      - "5002:5002"  
+    volumes:
+      - ./instance:/app/instance:rw  # 明确指定读写权限
+      - ./logs:/app/logs:rw  # 新增日志卷挂载
+    env_file:  # 添加这行
+      - .env   # 指定.env文件
+    environment:
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY}
+      - FLASK_ENV=development  # 标记为开发环境
+      - HTTP_PROXY=http://host.docker.internal:10809
+      - HTTPS_PROXY=http://host.docker.internal:10809
+      - http_proxy=http://host.docker.internal:10809
+      - https_proxy=http://host.docker.internal:10809
+    restart: always
+    user: "1000:1000"  # 使用宿主机的UID:GID
+    command: [
+              "gunicorn", 
+              "--workers", "4",
+              "--timeout", "120",
+              "--keep-alive", "5",
+              "--max-requests", "1000",
+              "--max-requests-jitter", "50",
+              "--log-level", "debug",     # 开发环境使用 debug 级别
+              "--access-logfile", "-",
+              "--error-logfile", "-",
+              "--bind", "0.0.0.0:5002",
+              "app:app"
+              # "python", "app.py"
+              
+              ]
+
+volumes:
+  instance:
